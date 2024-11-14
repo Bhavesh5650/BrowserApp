@@ -1,7 +1,12 @@
 package com.example.browser
 
+import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -12,9 +17,10 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        //enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -23,6 +29,32 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        binding.setWebView.loadUrl("https://www.google.com/")
+        binding.setWebView.settings.javaScriptEnabled = true
 
+        binding.setWebView.webViewClient = object : WebViewClient() {
+
+            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                binding.progressBar.visibility = View.VISIBLE
+            }
+
+            override fun onPageFinished(view: WebView?, url: String?) {
+                binding.progressBar.visibility = View.GONE
+            }
+        }
+
+        binding.backBtn.setOnClickListener {
+            if(binding.setWebView.canGoBack())
+            {
+                binding.setWebView.goBack()
+            }
+        }
+
+        binding.forwardBtn.setOnClickListener {
+            if(binding.setWebView.canGoForward())
+            {
+                binding.setWebView.goForward()
+            }
+        }
     }
 }
